@@ -21,7 +21,7 @@ const resolvers = {
   },
   User: {
     __resolveReference(object) {
-      // read the userActive data here
+      // need read the userActive data here
       return users.find((user) => user.id === object.id);
     },
   },
