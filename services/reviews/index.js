@@ -24,35 +24,37 @@ const typeDefs = gql`
 const resolvers = {
   Review: {
     author(review) {
-      return { __typename: "User", id: review.authorID };
-    }
+      //active is custom data which needs to pass to the user resolver
+      //active is not exposed to the user (schema)
+      return { __typename: "User", id: review.authorID, active: true };
+    },
   },
   User: {
     reviews(user) {
-      return reviews.filter(review => review.authorID === user.id);
+      return reviews.filter((review) => review.authorID === user.id);
     },
     numberOfReviews(user) {
-      return reviews.filter(review => review.authorID === user.id).length;
+      return reviews.filter((review) => review.authorID === user.id).length;
     },
     username(user) {
-      const found = usernames.find(username => username.id === user.id);
+      const found = usernames.find((username) => username.id === user.id);
       return found ? found.username : null;
-    }
+    },
   },
   Product: {
     reviews(product) {
-      return reviews.filter(review => review.product.upc === product.upc);
-    }
-  }
+      return reviews.filter((review) => review.product.upc === product.upc);
+    },
+  },
 };
 
 const server = new ApolloServer({
   schema: buildFederatedSchema([
     {
       typeDefs,
-      resolvers
-    }
-  ])
+      resolvers,
+    },
+  ]),
 });
 
 server.listen({ port: 4002 }).then(({ url }) => {
@@ -61,31 +63,31 @@ server.listen({ port: 4002 }).then(({ url }) => {
 
 const usernames = [
   { id: "1", username: "@ada" },
-  { id: "2", username: "@complete" }
+  { id: "2", username: "@complete" },
 ];
 const reviews = [
   {
     id: "1",
     authorID: "1",
     product: { upc: "1" },
-    body: "Love it!"
+    body: "Love it!",
   },
   {
     id: "2",
     authorID: "1",
     product: { upc: "2" },
-    body: "Too expensive."
+    body: "Too expensive.",
   },
   {
     id: "3",
     authorID: "2",
     product: { upc: "3" },
-    body: "Could be better."
+    body: "Could be better.",
   },
   {
     id: "4",
     authorID: "2",
     product: { upc: "1" },
-    body: "Prefer something else."
-  }
+    body: "Prefer something else.",
+  },
 ];
